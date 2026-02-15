@@ -1,13 +1,13 @@
 # Pixartprinting Price Scraper API
 
-API en FastAPI para descubrir las llamadas internas de configuración/precio de productos de Pixartprinting y devolver precios por artículo y configuración.
+API en FastAPI para descubrir llamadas internas de configuración/precio en Pixartprinting y devolver precios por artículo + configuración.
 
 ## Llamadas internas detectadas (producto ejemplo)
-Para `https://www.pixartprinting.es/formato-grande/impresion-lonas-microperforados/lona-frontlit/` se detectaron estas llamadas AJAX clave:
+Para `https://www.pixartprinting.es/formato-grande/impresion-lonas-microperforados/lona-frontlit/`:
 
-- `POST https://www.pixartprinting.es/product/validate-selection/` (devuelve configuración válida y opciones disponibles)
-- `POST https://www.pixartprinting.es/product/quote/` (cotización principal)
-- `POST https://www.pixartprinting.es/product/service-quote/` (servicios adicionales)
+- `POST https://www.pixartprinting.es/product/validate-selection/`
+- `POST https://www.pixartprinting.es/product/quote/`
+- `POST https://www.pixartprinting.es/product/service-quote/`
 
 ## Ejecutar
 
@@ -15,16 +15,26 @@ Para `https://www.pixartprinting.es/formato-grande/impresion-lonas-microperforad
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+python -m playwright install chromium
+uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-## Endpoints de la API
+Enlace local de ejecución:
+- API: `http://127.0.0.1:8000`
+- Swagger UI: `http://127.0.0.1:8000/docs`
 
-- `POST /products` añade un nuevo producto (nombre + URL)
-- `GET /products` lista productos registrados
-- `POST /scrape/{product_id}` analiza el producto, descubre llamadas internas y devuelve configuración + precios
+## Endpoints
 
-## Ejemplo
+- `POST /products` añade un producto (nombre + URL)
+- `GET /products` lista productos
+- `POST /scrape/{product_id}` scrappea el producto y devuelve:
+  - endpoints detectados,
+  - payloads capturados,
+  - configuración validada,
+  - respuesta de quote/service-quote,
+  - precios extraídos.
+
+## Ejemplo rápido
 
 ```bash
 curl -X POST http://127.0.0.1:8000/products \
